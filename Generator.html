@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GENERATOR | BEZRA V1</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --void: #020406;
+            --neon: #00ff88;
+            --purple: #bc13fe;
+            --gold: #f3ba2f;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+        body { 
+            background: radial-gradient(circle at center, #0f0a18 0%, #020406 100%);
+            color: #fff; font-family: 'Cairo', sans-serif; 
+            height: 100vh; display: flex; justify-content: center; align-items: center;
+            perspective: 1000px; overflow: hidden;
+        }
+
+        .gen-card {
+            background: rgba(15, 10, 25, 0.95); padding: 40px; border-radius: 40px;
+            border: 2px solid var(--purple); text-align: center;
+            box-shadow: 0 0 50px rgba(188, 19, 254, 0.2); width: 95%; max-width: 400px;
+            transform: rotateX(10deg); transform-style: preserve-3d;
+        }
+
+        .display-container { position: relative; margin-bottom: 25px; }
+
+        .display-box {
+            background: #000; padding: 25px; border-radius: 20px;
+            border: 1px dashed var(--purple);
+            font-family: 'Orbitron'; font-size: 22px; color: var(--neon);
+            letter-spacing: 2px; min-height: 80px; display: flex;
+            align-items: center; justify-content: center;
+        }
+
+        /* زر النسخ المحسن */
+        .copy-btn {
+            position: absolute; top: 50%; left: 15px; transform: translateY(-50%);
+            background: var(--purple); color: #fff; border: none;
+            padding: 10px; border-radius: 12px; cursor: pointer;
+            transition: 0.3s; font-size: 16px; opacity: 0; pointer-events: none;
+            box-shadow: 0 0 10px var(--purple);
+        }
+        .copy-btn.visible { opacity: 1; pointer-events: auto; }
+
+        .btn-gen {
+            width: 100%; padding: 18px; border-radius: 20px; border: none;
+            background: linear-gradient(135deg, var(--purple), #6a0dad);
+            color: #fff; font-family: 'Cairo'; font-weight: 900; font-size: 18px;
+            cursor: pointer; box-shadow: 0 10px 20px rgba(188, 19, 254, 0.3);
+        }
+
+        /* حقل نصي مخفي للنسخ الإجباري */
+        #hidden-input { position: absolute; left: -9999px; top: -9999px; }
+
+        .btn-go {
+            display: inline-block; margin-top: 20px; color: var(--gold);
+            text-decoration: none; font-size: 13px; font-weight: 700;
+            opacity: 0.5; pointer-events: none;
+        }
+        .btn-go.active { opacity: 1; pointer-events: auto; }
+
+        .copyright { margin-top: 30px; font-family: 'Orbitron'; font-size: 9px; color: #333; letter-spacing: 4px; }
+    </style>
+</head>
+<body>
+
+    <div class="gen-card">
+        <h1 style="font-family:'Orbitron';">BEZRA <span style="color:var(--purple)">GEN</span></h1>
+        <p>توليد كود الدخول - SECURE KEY</p>
+
+        <div class="display-container">
+            <div class="display-box" id="code-result">---- ----</div>
+            <input type="text" id="hidden-input">
+            <button class="copy-btn" id="copy-trigger" onclick="copyCode()">
+                <i class="fas fa-copy"></i>
+            </button>
+        </div>
+
+        <button class="btn-gen" onclick="generateNow()">توليد كود جديد</button>
+
+        <br>
+        <a href="index.html" id="link-to-script" class="btn-go">انتقل للسكربت الآن <i class="fas fa-arrow-left"></i></a>
+
+        <div class="copyright">© BEZRA SECURITY V1</div>
+    </div>
+
+    <script>
+        function generateNow() {
+            const display = document.getElementById('code-result');
+            const link = document.getElementById('link-to-script');
+            const copyBtn = document.getElementById('copy-trigger');
+            const hiddenInput = document.getElementById('hidden-input');
+            
+            display.innerText = "WAIT...";
+            copyBtn.classList.remove('visible');
+
+            setTimeout(() => {
+                const randomPart = Math.floor(1000 + Math.random() * 9999);
+                const finalCode = "BEZRA-" + randomPart + "-X";
+                
+                display.innerText = finalCode;
+                hiddenInput.value = finalCode; // وضع الكود في الحقل المخفي
+
+                // حفظ الكود للسكربت الرئيسي
+                localStorage.setItem('active_access_code', finalCode);
+
+                copyBtn.classList.add('visible');
+                link.classList.add('active');
+            }, 600);
+        }
+
+        function copyCode() {
+            const hiddenInput = document.getElementById('hidden-input');
+            const copyBtn = document.getElementById('copy-trigger');
+
+            // الطريقة المضمونة للنسخ
+            hiddenInput.select();
+            hiddenInput.setSelectionRange(0, 99999); // للموبايل
+
+            try {
+                document.execCommand('copy');
+                // تغيير الشكل للتأكيد
+                copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                copyBtn.style.background = "var(--neon)";
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+                    copyBtn.style.background = "var(--purple)";
+                }, 2000);
+            } catch (err) {
+                alert("فشل النسخ، حاول تحديث المتصفح");
+            }
+        }
+    </script>
+</body>
+</html>
